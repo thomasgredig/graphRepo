@@ -1,0 +1,55 @@
+---
+title: "03-TimeLine"
+author: "Thomas Gredig"
+date: "4/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Time Line
+
+```{r data}
+library(ggplot2)
+library(tidyverse)
+
+d = vroom::vroom(here::here("input","theses-timeline.csv"))
+```
+
+```{r}
+n <- data.frame(mtcars, name=  row.names(mtcars))
+plt_test <- ggplot(n, aes(mpg, reorder(name, mpg))) + 
+  geom_point(size=3, color='red') + 
+  geom_text(aes(x=mpg + 0.5, label=name, hjust=0))+
+  scale_x_continuous(limits=c(0,40)) + 
+  coord_cartesian(clip="off") + 
+  theme_bw() + 
+  theme(axis.title.y=element_blank(),
+        axis.text.y = element_blank())
+```
+
+
+
+```{r}
+d %>% mutate(name = paste(firstName, lastName)) %>%
+  select(name, startYear, endYear) %>%
+  pivot_longer(!name, names_to="type", values_to="Year") -> df
+  
+plt_final <- ggplot(df, aes(Year, reorder(name, Year))) + 
+  geom_point(size=3, color='red') + 
+  #geom_text(aes(x=Year + 0.5, label=name, hjust=0))+
+  geom_line(size=3, col='red') + 
+  coord_cartesian(clip="off") + 
+  theme_bw() + 
+  theme(axis.title.y=element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.y = element_blank())
+
+ragg::agg_png(here::here("render", paste0("03-timeLine", format(Sys.time(), "%Y%m%d"), ".png")), res = 300, width = 6, height = 4, units = "in")
+
+plt_final
+dev.off()
+```
