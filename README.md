@@ -11,4 +11,4 @@ Repository for some graphs and ideas how to make them.
 
 ## time line
 
-![time line or something like that](03-timeLine20210410.png)
+![time line or something like that](render/03-timeLine20210410.png)
